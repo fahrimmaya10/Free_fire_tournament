@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pendaftaran Turnamen Free Fire</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid white;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        .btn {
+            background: orange;
+            color: black;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 15px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pendaftaran Turnamen Free Fire</h1>
+        <p>Malam Minggu, 15 - 2024 | 9:00 WIB</p>
+        <p>Mode: Squad | Maksimal 12 Squad | Hadiah: 20 Diamond per Kill</p>
+        <form id="registerForm">
+            <input type="text" id="teamName" placeholder="Nama Tim" required>
+            <br>
+            <button type="submit" class="btn">Daftar Sekarang</button>
+        </form>
+        <div id="codeRoom" style="display: none; margin-top: 20px;">
+            <h3>Kode Room: <span id="roomCode"></span></h3>
+            <p>Catat kode ini, karena tidak akan ditampilkan lagi!</p>
+        </div>
+        <h2>Squad Terdaftar</h2>
+        <table>
+            <tr>
+                <th>Nama Tim</th>
+                <th>Aksi</th>
+            </tr>
+            <tbody id="teamList">
+                <!-- Daftar tim akan muncul di sini -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let teamName = document.getElementById("teamName").value;
+            if (teamName) {
+                let roomCode = Math.floor(1000 + Math.random() * 9000);
+                document.getElementById("roomCode").innerText = roomCode;
+                document.getElementById("codeRoom").style.display = "block";
+                setTimeout(() => {
+                    document.getElementById("codeRoom").style.display = "none";
+                }, 5000);
+                let newRow = `<tr><td>${teamName}</td><td><button class='btn' onclick='removeTeam(this)'>Hapus</button></td></tr>`;
+                document.getElementById("teamList").innerHTML += newRow;
+                document.getElementById("teamName").value = "";
+            }
+        });
+        function removeTeam(btn) {
+            btn.parentElement.parentElement.remove();
+        }
+    </script>
+</body>
+</html>
