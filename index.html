@@ -35,10 +35,16 @@
             border: none;
             cursor: pointer;
         }
-        input[type="text"] {
-            width: 80%;
-            padding: 15px;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .form-group input {
             font-size: 16px;
+            padding: 8px;
+            width: 300px;
             margin-bottom: 10px;
         }
     </style>
@@ -49,9 +55,10 @@
         <p>Malam Minggu, 15 - 2024 | 9:00 WIB</p>
         <p>Mode: Squad | Maksimal 12 Squad | Hadiah: 20 Diamond per Kill</p>
         <form id="registerForm">
-            <input type="text" id="teamName" placeholder="Nama Tim" required>
-            <br>
-            <button type="submit" class="btn">Daftar Sekarang</button>
+            <div class="form-group">
+                <input type="text" id="teamName" placeholder="Nama Tim" required>
+                <button type="submit" class="btn">Daftar Sekarang</button>
+            </div>
         </form>
         <div id="codeRoom" style="display: none; margin-top: 20px;">
             <h3>Kode Room: <span id="roomCode"></span></h3>
@@ -63,29 +70,70 @@
                 <th>Nama Tim</th>
                 <th>Aksi</th>
             </tr>
-            <tbody id="teamList">
-                <!-- Daftar tim akan muncul di sini -->
-            </tbody>
+            <tbody id="teamList"></tbody>
         </table>
+        <h2>Admin</h2>
+        <button class="btn" onclick="promptChangeRoomCode()">Ganti Kode Room</button>
     </div>
     <script>
+        let currentRoomCode = "1234";
+
         document.getElementById("registerForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            let teamName = document.getElementById("teamName").value;
-            if (teamName) {
-                let roomCode = Math.floor(1000 + Math.random() * 9000);
-                document.getElementById("roomCode").innerText = roomCode;
-                document.getElementById("codeRoom").style.display = "block";
-                setTimeout(() => {
-                    document.getElementById("codeRoom").style.display = "none";
-                }, 5000);
-                let newRow = `<tr><td>${teamName}</td><td><button class='btn' onclick='removeTeam(this)'>Hapus</button></td></tr>`;
-                document.getElementById("teamList").innerHTML += newRow;
-                document.getElementById("teamName").value = "";
+            let teamName = document.getElementById("teamName").value.trim();
+            let teamList = document.getElementById("teamList");
+            
+            if (!teamName) {
+                alert("Nama tim tidak boleh kosong!");
+                return;
             }
+            
+            let existingTeams = Array.from(teamList.getElementsByTagName("td")).map(td => td.innerText);
+            if (existingTeams.includes(teamName)) {
+                alert("Nama tim sudah terdaftar!");
+                return;
+            }
+            
+            if (existingTeams.length / 2 >= 12) { // Setiap tim memiliki dua kolom dalam tabel
+                alert("Maksimal 12 squad sudah tercapai!");
+                return;
+            }
+            
+            document.getElementById("roomCode").innerText = currentRoomCode;
+            document.getElementById("codeRoom").style.display = "block";
+            setTimeout(() => {
+                document.getElementById("codeRoom").style.display = "none";
+            }, 5000);
+            
+            let newRow = `<tr><td>${teamName}</td><td><button class='btn' onclick='confirmRemove(this)'>Hapus</button></td></tr>`;
+            teamList.innerHTML += newRow;
+            document.getElementById("teamName").value = "";
         });
-        function removeTeam(btn) {
-            btn.parentElement.parentElement.remove();
+        
+        function confirmRemove(btn) {
+            let password = prompt("Masukkan sandi untuk menghapus squad:");
+            let correctPassword = "admin123";
+            if (password === correctPassword) {
+                btn.parentElement.parentElement.remove();
+            } else {
+                alert("Sandi salah! Squad tidak dihapus.");
+            }
+        }
+        
+        function promptChangeRoomCode() {
+            let password = prompt("Masukkan sandi admin untuk mengganti kode room:");
+            let correctPassword = "admin123";
+            if (password === correctPassword) {
+                let newRoomCode = prompt("Masukkan kode room baru:");
+                if (newRoomCode) {
+                    currentRoomCode = newRoomCode;
+                    alert("Kode room berhasil diganti!");
+                } else {
+                    alert("Kode room tidak boleh kosong!");
+                }
+            } else {
+                alert("Sandi salah! Kode room tidak diganti.");
+            }
         }
     </script>
 </body>
